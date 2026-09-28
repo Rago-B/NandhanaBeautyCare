@@ -15,7 +15,7 @@ const SITE_CONFIG = {
   upiId: "8072117541@axl",
 
   // Name shown in the customer's UPI app when paying
-  upiPayeeName: "Nandhana Beauty Care",
+  upiPayeeName: "REGO B",
 
   upiAmount: null,
 
