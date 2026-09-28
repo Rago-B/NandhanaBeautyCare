@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Pay via UPI or leave a Google review — quick and secure." />
+    <meta name="theme-color" content="#0f1419" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Business — Pay &amp; Review</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="main-content">
+      <header class="header">
+        <div class="logo-wrap" id="logo-wrap">
+          <img id="logo-img" src="" alt="" width="88" height="88" hidden />
+          <span class="logo-placeholder" id="logo-placeholder" aria-hidden="true">Logo</span>
+        </div>
+        <h1 class="business-name" id="business-name">YOUR_BUSINESS_NAME</h1>
+        <p class="tagline" id="tagline">Thank you for choosing us!</p>
+      </header>
+
+      <section class="actions-card" aria-labelledby="prompt-text">
+        <h2 id="prompt-text">How would you like to continue?</h2>
+        <ul class="action-list" role="list">
+          <li>
+            <button
+              type="button"
+              class="action-btn action-btn--pay"
+              id="btn-pay"
+              aria-describedby="pay-desc"
+            >
+              <span class="icon" id="pay-icon" aria-hidden="true">�붿</span>
+              <span id="pay-label">PAY NOW</span>
+            </button>
+            <span id="pay-desc" class="visually-hidden">
+              Opens your UPI app to pay this business directly. No login required.
+            </span>
+          </li>
+          <li>
+            <button
+              type="button"
+              class="action-btn action-btn--review"
+              id="btn-review"
+              aria-describedby="review-desc"
+            >
+              <span class="icon" id="review-icon" aria-hidden="true">⭐</span>
+              <span id="review-label">GIVE A REVIEW</span>
+            </button>
+            <span id="review-desc" class="visually-hidden">
+              Opens Google Maps to write a review in a new tab.
+            </span>
+          </li>
+        </ul>
+        <p class="upi-fallback" id="upi-fallback" role="status">
+          If your UPI app did not open, scan this QR on your phone or open this page on Android/iPhone.
+        </p>
+      </section>
+
+      <p class="footer-note" id="footer-message">Thank you for your support ❤붿</p>
+    </main>
+
+    <!-- Configuration: edit config.js (UPI ID, Google Review URL, colors, etc.) -->
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
