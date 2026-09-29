@@ -30,40 +30,48 @@
         <h2 id="prompt-text">How would you like to continue?</h2>
         <ul class="action-list" role="list">
           <li>
-            <button
-              type="button"
+            <a
               class="action-btn action-btn--pay"
               id="btn-pay"
+              href="#"
               aria-describedby="pay-desc"
             >
-              <span class="icon" id="pay-icon" aria-hidden="true">�붿</span>
+              <span class="icon" id="pay-icon" aria-hidden="true">💳</span>
               <span id="pay-label">PAY NOW</span>
-            </button>
+            </a>
             <span id="pay-desc" class="visually-hidden">
               Opens your UPI app to pay this business directly. No login required.
             </span>
           </li>
           <li>
-            <button
-              type="button"
+            <a
               class="action-btn action-btn--review"
               id="btn-review"
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-describedby="review-desc"
             >
               <span class="icon" id="review-icon" aria-hidden="true">⭐</span>
               <span id="review-label">GIVE A REVIEW</span>
-            </button>
+            </a>
             <span id="review-desc" class="visually-hidden">
               Opens Google Maps to write a review in a new tab.
             </span>
           </li>
         </ul>
-        <p class="upi-fallback" id="upi-fallback" role="status">
-          If your UPI app did not open, scan this QR on your phone or open this page on Android/iPhone.
-        </p>
+        <div class="upi-fallback" id="upi-fallback" role="status">
+          <p class="upi-fallback-text">
+            If your UPI app didn't open automatically, open this page on your phone (Android/iPhone) or copy the UPI ID below to pay:
+          </p>
+          <div class="upi-copy-row">
+            <span class="upi-id-badge" id="upi-id-display"></span>
+            <button type="button" class="btn-copy-upi" id="btn-copy-upi">Copy</button>
+          </div>
+        </div>
       </section>
 
-      <p class="footer-note" id="footer-message">Thank you for your support ❤붿</p>
+      <p class="footer-note" id="footer-message">Thank you for your support ❤️</p>
     </main>
 
     <!-- Configuration: edit config.js (UPI ID, Google Review URL, colors, etc.) -->

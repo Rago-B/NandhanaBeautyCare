@@ -40,48 +40,81 @@
     return value.startsWith("YOUR_");
   }
 
-  function openUpiPayment() {
-    if (isPlaceholder(config.upiId) || isPlaceholder(config.upiPayeeName)) {
-      alert(
-        "UPI is not configured yet. Open config.js and set upiId and upiPayeeName for your client."
-      );
-      return;
-    }
-
-    const upiUrl = buildUpiDeepLink(config);
-    window.location.href = upiUrl;
-
-    // On desktop browsers, deep link may not open; show hint after a short delay
-    window.setTimeout(function () {
-      const fallback = document.getElementById("upi-fallback");
-      if (fallback) fallback.classList.add("is-visible");
-    }, 1200);
-  }
-
-  function openGoogleReview() {
-    const url = config.googleReviewUrl;
-    if (isPlaceholder(url)) {
-      alert(
-        "Google Review link is not configured. Open config.js and set googleReviewUrl."
-      );
-      return;
-    }
-
-    const opened = window.open(url, "_blank", "noopener,noreferrer");
-    if (!opened) {
-      window.location.href = url;
-    }
-  }
-
   function bindActions() {
     const payBtn = document.getElementById("btn-pay");
     const reviewBtn = document.getElementById("btn-review");
+    const fallback = document.getElementById("upi-fallback");
+    const upiDisplay = document.getElementById("upi-id-display");
+    const copyBtn = document.getElementById("btn-copy-upi");
 
-    if (payBtn) {
-      payBtn.addEventListener("click", openUpiPayment);
+    // Display UPI ID in the fallback box
+    if (upiDisplay && config.upiId) {
+      upiDisplay.textContent = config.upiId;
     }
+
+    // Copy UPI ID button
+    if (copyBtn && config.upiId) {
+      copyBtn.addEventListener("click", function () {
+        function onCopied() {
+          copyBtn.textContent = "Copied! ✓";
+          setTimeout(function () {
+            copyBtn.textContent = "Copy";
+          }, 2000);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(config.upiId).then(onCopied).catch(fallbackCopy);
+        } else {
+          fallbackCopy();
+        }
+
+        function fallbackCopy() {
+          const temp = document.createElement("textarea");
+          temp.value = config.upiId;
+          document.body.appendChild(temp);
+          temp.select();
+          document.execCommand("copy");
+          document.body.removeChild(temp);
+          onCopied();
+        }
+      });
+    }
+
+    // Direct anchor link for UPI Payment (Option A)
+    if (payBtn) {
+      if (isPlaceholder(config.upiId) || isPlaceholder(config.upiPayeeName)) {
+        payBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          alert(
+            "UPI is not configured yet. Open config.js and set upiId and upiPayeeName for your client."
+          );
+        });
+      } else {
+        const upiUrl = buildUpiDeepLink(config);
+        payBtn.setAttribute("href", upiUrl);
+
+        payBtn.addEventListener("click", function () {
+          // On desktop / non-UPI devices, deep link won't open.
+          // Show fallback hint after a short delay so user can see and copy the UPI ID
+          window.setTimeout(function () {
+            if (fallback) fallback.classList.add("is-visible");
+          }, 1000);
+        });
+      }
+    }
+
+    // Direct anchor link for Google Review
     if (reviewBtn) {
-      reviewBtn.addEventListener("click", openGoogleReview);
+      if (isPlaceholder(config.googleReviewUrl)) {
+        reviewBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          alert(
+            "Google Review link is not configured. Open config.js and set googleReviewUrl."
+          );
+        });
+      } else {
+        reviewBtn.setAttribute("href", config.googleReviewUrl);
+      }
     }
   }
 

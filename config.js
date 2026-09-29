@@ -46,9 +46,9 @@ function buildUpiDeepLink(config) {
   const params = new URLSearchParams();
   params.set("pa", config.upiId);
   params.set("pn", config.upiPayeeName);
+  params.set("cu", "INR");
   if (config.upiAmount != null && config.upiAmount !== "") {
     params.set("am", String(config.upiAmount));
-    params.set("cu", "INR");
   }
   return `upi://pay?${params.toString()}`;
 }
