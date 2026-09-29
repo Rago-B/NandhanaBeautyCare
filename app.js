@@ -13,16 +13,13 @@
     const map = {
       background: "--color-bg",
       surface: "--color-surface",
-      surfaceElevated: "--color-surface-elevated",
       textPrimary: "--color-text",
       textSecondary: "--color-text-muted",
       accentPay: "--color-pay",
       accentPayHover: "--color-pay-hover",
       accentReview: "--color-review",
       accentReviewHover: "--color-review-hover",
-      accentGold: "--color-gold",
       border: "--color-border",
-      shadow: "--color-shadow",
     };
     Object.entries(map).forEach(([key, cssVar]) => {
       if (colors[key] != null) {
@@ -84,7 +81,7 @@
 
   function initLogo() {
     const img = document.getElementById("logo-img");
-    const emblem = document.getElementById("luxury-emblem");
+    const placeholder = document.getElementById("logo-placeholder");
 
     if (config.logoUrl) {
       if (img) {
@@ -93,13 +90,22 @@
         img.hidden = false;
         img.addEventListener("error", function () {
           img.hidden = true;
-          if (emblem) emblem.hidden = false;
+          if (placeholder) placeholder.hidden = false;
         });
       }
-      if (emblem) emblem.hidden = true;
+      if (placeholder) placeholder.hidden = true;
     } else {
       if (img) img.hidden = true;
-      if (emblem) emblem.hidden = false;
+      if (placeholder) {
+        placeholder.hidden = false;
+        const initials = (config.businessName || "B")
+          .split(/\s+/)
+          .map((w) => w[0])
+          .join("")
+          .slice(0, 2)
+          .toUpperCase();
+        placeholder.textContent = initials || "NB";
+      }
     }
   }
 
@@ -110,13 +116,13 @@
 
     if (qrImg && upiUrl) {
       const qrApiUrl =
-        "https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=12&data=" +
+        "https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=12&data=" +
         encodeURIComponent(upiUrl);
       qrImg.src = qrApiUrl;
     }
 
-    // Auto-open QR code if viewed on desktop / laptop so users can scan directly
-    const isDesktop =
+    // Auto-open QR on desktop
+    var isDesktop =
       window.matchMedia("(min-width: 768px)").matches ||
       (!("ontouchstart" in window) && navigator.maxTouchPoints === 0);
 
@@ -127,7 +133,7 @@
 
     if (qrToggleBtn && qrDrawer) {
       qrToggleBtn.addEventListener("click", function () {
-        const isOpen = qrDrawer.classList.toggle("is-open");
+        var isOpen = qrDrawer.classList.toggle("is-open");
         qrToggleBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
       });
     }
@@ -141,77 +147,67 @@
     const appPaytm = document.getElementById("app-paytm");
     const copyBtn = document.getElementById("btn-copy-upi");
     const copyBtnText = document.getElementById("copy-btn-text");
-    const fallback = document.getElementById("upi-fallback");
 
     const upiUrl = buildUpiDeepLink(config);
 
-    // Detect Chrome on Android (Chromium requires intent:// URI syntax, Firefox uses upi://)
-    const isAndroid = /android/i.test(navigator.userAgent);
-    const isChrome =
+    // Detect Chrome on Android
+    var isAndroid = /android/i.test(navigator.userAgent);
+    var isChrome =
       /chrome|crios/i.test(navigator.userAgent) &&
       !/firefox|fxios/i.test(navigator.userAgent);
 
-    let payLink = upiUrl;
-    let phonepeLink = upiUrl;
-    let gpayLink = upiUrl;
-    let paytmLink = upiUrl;
-
+    // Build links
     if (config.upiId) {
-      const encName = encodeURIComponent(
+      var encName = encodeURIComponent(
         config.upiPayeeName || config.businessName
       ).replace(/\+/g, "%20");
-      let baseParams = `pa=${config.upiId}&pn=${encName}`;
+      var baseParams = "pa=" + config.upiId + "&pn=" + encName;
       if (config.upiAmount != null && config.upiAmount !== "") {
-        baseParams += `&am=${config.upiAmount}&cu=INR`;
+        baseParams += "&am=" + config.upiAmount + "&cu=INR";
       }
 
+      var payLink, phonepeLink, gpayLink, paytmLink;
+
       if (isAndroid && isChrome) {
-        payLink = `intent://pay?${baseParams}#Intent;scheme=upi;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
-        phonepeLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=com.phonepe.app;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
-        gpayLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
-        paytmLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=net.one97.paytm;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+        payLink = "intent://pay?" + baseParams + "#Intent;scheme=upi;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end";
+        phonepeLink = "intent://pay?" + baseParams + "#Intent;scheme=upi;package=com.phonepe.app;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end";
+        gpayLink = "intent://pay?" + baseParams + "#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end";
+        paytmLink = "intent://pay?" + baseParams + "#Intent;scheme=upi;package=net.one97.paytm;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end";
       } else {
-        const rawUpi = `upi://pay?${baseParams}`;
+        var rawUpi = "upi://pay?" + baseParams;
         payLink = rawUpi;
         phonepeLink = rawUpi;
         gpayLink = rawUpi;
         paytmLink = rawUpi;
       }
 
+      if (payBtn) payBtn.setAttribute("href", payLink);
       if (appPhonePe) appPhonePe.setAttribute("href", phonepeLink);
       if (appGPay) appGPay.setAttribute("href", gpayLink);
       if (appPaytm) appPaytm.setAttribute("href", paytmLink);
     }
 
-    // Primary Pay Anchor Link
-    if (payBtn) {
-      if (isPlaceholder(config.upiId) || isPlaceholder(config.upiPayeeName)) {
-        payBtn.addEventListener("click", function (e) {
-          e.preventDefault();
-          alert(
-            "UPI is not configured yet. Open config.js and set upiId and upiPayeeName."
-          );
-        });
-      } else {
-        payBtn.setAttribute("href", payLink);
-      }
+    // Placeholder guard for pay
+    if (payBtn && (isPlaceholder(config.upiId) || isPlaceholder(config.upiPayeeName))) {
+      payBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        alert("UPI is not configured yet. Open config.js and set upiId and upiPayeeName.");
+      });
     }
 
-    // Review Link
+    // Review link
     if (reviewBtn) {
       if (isPlaceholder(config.googleReviewUrl)) {
         reviewBtn.addEventListener("click", function (e) {
           e.preventDefault();
-          alert(
-            "Google Review link is not configured yet. Open config.js and set googleReviewUrl."
-          );
+          alert("Google Review link is not configured. Open config.js and set googleReviewUrl.");
         });
       } else {
         reviewBtn.setAttribute("href", config.googleReviewUrl);
       }
     }
 
-    // Copy UPI ID button
+    // Copy UPI ID
     if (copyBtn && config.upiId) {
       copyBtn.addEventListener("click", function () {
         copyToClipboard(config.upiId, function () {
@@ -231,16 +227,14 @@
     applyTheme(config.colors || {});
 
     setText("business-name", config.businessName);
-    setText("badge-text", config.badgeText || "✦ Luxury Salon & Aesthetics ✦");
     setText("tagline", config.tagline);
-    setText("merchant-name", config.upiPayeeName || config.businessName);
     setText("footer-message", config.footerMessage);
     setText("upi-id-display", config.upiId);
 
-    const payLabel = document.getElementById("pay-label");
-    const reviewLabel = document.getElementById("review-label");
-    const payIcon = document.getElementById("pay-icon");
-    const reviewIcon = document.getElementById("review-icon");
+    var payLabel = document.getElementById("pay-label");
+    var reviewLabel = document.getElementById("review-label");
+    var payIcon = document.getElementById("pay-icon");
+    var reviewIcon = document.getElementById("review-icon");
 
     if (payIcon && config.payButtonIcon) payIcon.textContent = config.payButtonIcon;
     if (reviewIcon && config.reviewButtonIcon) reviewIcon.textContent = config.reviewButtonIcon;

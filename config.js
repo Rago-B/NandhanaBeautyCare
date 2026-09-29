@@ -29,18 +29,15 @@ const SITE_CONFIG = {
   reviewButtonIcon: "⭐",
 
   colors: {
-    background: "#090a10",
-    surface: "rgba(18, 22, 33, 0.8)",
-    surfaceElevated: "rgba(26, 32, 48, 0.9)",
-    textPrimary: "#fcfdff",
-    textSecondary: "#9ca9ba",
-    accentPay: "#10b981",
-    accentPayHover: "#059669",
-    accentReview: "#f59e0b",
-    accentReviewHover: "#d97706",
-    accentGold: "#e2b472",
-    border: "rgba(255, 255, 255, 0.08)",
-    shadow: "rgba(0, 0, 0, 0.45)",
+    background: "#ffffff",
+    surface: "#f7f8fa",
+    textPrimary: "#1a1a1a",
+    textSecondary: "#6b7280",
+    accentPay: "#111111",
+    accentPayHover: "#333333",
+    accentReview: "#111111",
+    accentReviewHover: "#333333",
+    border: "#e5e7eb",
   },
 };
 
