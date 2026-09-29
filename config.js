@@ -45,12 +45,10 @@ const SITE_CONFIG = {
 };
 
 function buildUpiDeepLink(config) {
-  const params = new URLSearchParams();
-  params.set("pa", config.upiId);
-  params.set("pn", config.upiPayeeName);
-  params.set("cu", "INR");
+  const payeeName = encodeURIComponent(config.upiPayeeName || config.businessName || "").replace(/\+/g, "%20");
+  let query = `pa=${config.upiId}&pn=${payeeName}&cu=INR`;
   if (config.upiAmount != null && config.upiAmount !== "") {
-    params.set("am", String(config.upiAmount));
+    query += `&am=${config.upiAmount}`;
   }
-  return `upi://pay?${params.toString()}`;
+  return `upi://pay?${query}`;
 }
