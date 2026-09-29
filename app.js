@@ -145,6 +145,44 @@
 
     const upiUrl = buildUpiDeepLink(config);
 
+    // Detect Chrome on Android (Chromium requires intent:// URI syntax, Firefox uses upi://)
+    const isAndroid = /android/i.test(navigator.userAgent);
+    const isChrome =
+      /chrome|crios/i.test(navigator.userAgent) &&
+      !/firefox|fxios/i.test(navigator.userAgent);
+
+    let payLink = upiUrl;
+    let phonepeLink = upiUrl;
+    let gpayLink = upiUrl;
+    let paytmLink = upiUrl;
+
+    if (config.upiId) {
+      const encName = encodeURIComponent(
+        config.upiPayeeName || config.businessName
+      ).replace(/\+/g, "%20");
+      let baseParams = `pa=${config.upiId}&pn=${encName}`;
+      if (config.upiAmount != null && config.upiAmount !== "") {
+        baseParams += `&am=${config.upiAmount}&cu=INR`;
+      }
+
+      if (isAndroid && isChrome) {
+        payLink = `intent://pay?${baseParams}#Intent;scheme=upi;end;`;
+        phonepeLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=com.phonepe.app;end;`;
+        gpayLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end;`;
+        paytmLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=net.one97.paytm;end;`;
+      } else {
+        const rawUpi = `upi://pay?${baseParams}`;
+        payLink = rawUpi;
+        phonepeLink = rawUpi;
+        gpayLink = rawUpi;
+        paytmLink = rawUpi;
+      }
+
+      if (appPhonePe) appPhonePe.setAttribute("href", phonepeLink);
+      if (appGPay) appGPay.setAttribute("href", gpayLink);
+      if (appPaytm) appPaytm.setAttribute("href", paytmLink);
+    }
+
     // Primary Pay Anchor Link
     if (payBtn) {
       if (isPlaceholder(config.upiId) || isPlaceholder(config.upiPayeeName)) {
@@ -155,22 +193,8 @@
           );
         });
       } else {
-        payBtn.setAttribute("href", upiUrl);
+        payBtn.setAttribute("href", payLink);
       }
-    }
-
-    // Direct App Links
-    if (config.upiId) {
-      const encName = encodeURIComponent(config.upiPayeeName || config.businessName).replace(/\+/g, "%20");
-      let baseParams = `pa=${config.upiId}&pn=${encName}`;
-      if (config.upiAmount != null && config.upiAmount !== "") {
-        baseParams += `&am=${config.upiAmount}&cu=INR`;
-      }
-      const rawUpiUrl = `upi://pay?${baseParams}`;
-
-      if (appPhonePe) appPhonePe.setAttribute("href", rawUpiUrl);
-      if (appGPay) appGPay.setAttribute("href", rawUpiUrl);
-      if (appPaytm) appPaytm.setAttribute("href", rawUpiUrl);
     }
 
     // Review Link
