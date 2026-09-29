@@ -4,12 +4,13 @@
 
 const SITE_CONFIG = {
   businessName: "Nandhana Beauty Care",
-  tagline: "Thank you for choosing us!",
-  footerMessage: "Thank you for your support ❤️",
+  badgeText: "✦ Luxury Salon & Aesthetics ✦",
+  tagline: "Hair, Skin & Bridal • Elevate Your Natural Glow",
+  footerMessage: "Thank you for supporting our salon ❤️",
   promptText: "How would you like to continue?",
 
   logoUrl: "",
-  logoAlt: "Business logo",
+  logoAlt: "Nandhana Beauty Care logo",
 
   // ENTER CLIENT UPI ID HERE (e.g. "shopname@paytm", "9876543210@ybl")
   upiId: "8072117541@axl",
@@ -22,23 +23,24 @@ const SITE_CONFIG = {
   // ENTER CLIENT GOOGLE REVIEW URL HERE (Google direct review link)
   googleReviewUrl: "https://search.google.com/local/writereview?placeid=ChIJRcEbiL8RBDsRHhv30-dJpM4",
 
-  payButtonText: "PAY NOW",
-  payButtonIcon: "💳",
-  reviewButtonText: "GIVE A REVIEW",
+  payButtonText: "PAY VIA ANY UPI APP",
+  payButtonIcon: "⚡",
+  reviewButtonText: "WRITE A GOOGLE REVIEW",
   reviewButtonIcon: "⭐",
 
   colors: {
-    background: "#0f1419",
-    surface: "#1a2332",
-    surfaceElevated: "#243044",
-    textPrimary: "#f4f6f8",
-    textSecondary: "#9aa8b8",
-    accentPay: "#22c55e",
-    accentPayHover: "#16a34a",
+    background: "#090a10",
+    surface: "rgba(18, 22, 33, 0.8)",
+    surfaceElevated: "rgba(26, 32, 48, 0.9)",
+    textPrimary: "#fcfdff",
+    textSecondary: "#9ca9ba",
+    accentPay: "#10b981",
+    accentPayHover: "#059669",
     accentReview: "#f59e0b",
     accentReviewHover: "#d97706",
+    accentGold: "#e2b472",
     border: "rgba(255, 255, 255, 0.08)",
-    shadow: "rgba(0, 0, 0, 0.35)",
+    shadow: "rgba(0, 0, 0, 0.45)",
   },
 };
 

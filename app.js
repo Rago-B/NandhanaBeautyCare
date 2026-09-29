@@ -20,6 +20,7 @@
       accentPayHover: "--color-pay-hover",
       accentReview: "--color-review",
       accentReviewHover: "--color-review-hover",
+      accentGold: "--color-gold",
       border: "--color-border",
       shadow: "--color-shadow",
     };
@@ -40,62 +41,123 @@
     return value.startsWith("YOUR_");
   }
 
-  function bindActions() {
-    const payBtn = document.getElementById("btn-pay");
-    const reviewBtn = document.getElementById("btn-review");
-    const fallback = document.getElementById("upi-fallback");
-    const upiDisplay = document.getElementById("upi-id-display");
-    const copyBtn = document.getElementById("btn-copy-upi");
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("is-active");
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(function () {
+      toast.classList.remove("is-active");
+    }, 2800);
+  }
 
-    // Display UPI ID in the fallback box
-    if (upiDisplay && config.upiId) {
-      upiDisplay.textContent = config.upiId;
+  function copyToClipboard(text, onSuccess) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard
+        .writeText(text)
+        .then(onSuccess)
+        .catch(function () {
+          fallbackCopy(text, onSuccess);
+        });
+    } else {
+      fallbackCopy(text, onSuccess);
+    }
+  }
+
+  function fallbackCopy(text, onSuccess) {
+    try {
+      const temp = document.createElement("textarea");
+      temp.value = text;
+      temp.setAttribute("readonly", "");
+      temp.style.position = "absolute";
+      temp.style.left = "-9999px";
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+      onSuccess();
+    } catch (e) {
+      alert("UPI ID: " + text);
+    }
+  }
+
+  function initLogo() {
+    const img = document.getElementById("logo-img");
+    const emblem = document.getElementById("luxury-emblem");
+
+    if (config.logoUrl) {
+      if (img) {
+        img.src = config.logoUrl;
+        img.alt = config.logoAlt || config.businessName;
+        img.hidden = false;
+        img.addEventListener("error", function () {
+          img.hidden = true;
+          if (emblem) emblem.hidden = false;
+        });
+      }
+      if (emblem) emblem.hidden = true;
+    } else {
+      if (img) img.hidden = true;
+      if (emblem) emblem.hidden = false;
+    }
+  }
+
+  function initQrCode(upiUrl) {
+    const qrImg = document.getElementById("qr-image");
+    const qrDrawer = document.getElementById("qr-drawer");
+    const qrToggleBtn = document.getElementById("btn-toggle-qr");
+
+    if (qrImg && upiUrl) {
+      const qrApiUrl =
+        "https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=12&data=" +
+        encodeURIComponent(upiUrl);
+      qrImg.src = qrApiUrl;
     }
 
-    // Copy UPI ID button
-    if (copyBtn && config.upiId) {
-      copyBtn.addEventListener("click", function () {
-        function onCopied() {
-          copyBtn.textContent = "Copied! ✓";
-          setTimeout(function () {
-            copyBtn.textContent = "Copy";
-          }, 2000);
-        }
+    // Auto-open QR code if viewed on desktop / laptop so users can scan directly
+    const isDesktop =
+      window.matchMedia("(min-width: 768px)").matches ||
+      (!("ontouchstart" in window) && navigator.maxTouchPoints === 0);
 
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(config.upiId).then(onCopied).catch(fallbackCopy);
-        } else {
-          fallbackCopy();
-        }
+    if (isDesktop && qrDrawer && qrToggleBtn) {
+      qrDrawer.classList.add("is-open");
+      qrToggleBtn.setAttribute("aria-expanded", "true");
+    }
 
-        function fallbackCopy() {
-          const temp = document.createElement("textarea");
-          temp.value = config.upiId;
-          document.body.appendChild(temp);
-          temp.select();
-          document.execCommand("copy");
-          document.body.removeChild(temp);
-          onCopied();
-        }
+    if (qrToggleBtn && qrDrawer) {
+      qrToggleBtn.addEventListener("click", function () {
+        const isOpen = qrDrawer.classList.toggle("is-open");
+        qrToggleBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
       });
     }
+  }
 
-    // Direct anchor link for UPI Payment (Option A)
+  function initLinks() {
+    const payBtn = document.getElementById("btn-pay");
+    const reviewBtn = document.getElementById("btn-review");
+    const appGPay = document.getElementById("app-gpay");
+    const appPhonePe = document.getElementById("app-phonepe");
+    const appPaytm = document.getElementById("app-paytm");
+    const copyBtn = document.getElementById("btn-copy-upi");
+    const copyBtnText = document.getElementById("copy-btn-text");
+    const fallback = document.getElementById("upi-fallback");
+
+    const upiUrl = buildUpiDeepLink(config);
+
+    // Primary Pay Anchor Link
     if (payBtn) {
       if (isPlaceholder(config.upiId) || isPlaceholder(config.upiPayeeName)) {
         payBtn.addEventListener("click", function (e) {
           e.preventDefault();
           alert(
-            "UPI is not configured yet. Open config.js and set upiId and upiPayeeName for your client."
+            "UPI is not configured yet. Open config.js and set upiId and upiPayeeName."
           );
         });
       } else {
-        const upiUrl = buildUpiDeepLink(config);
         payBtn.setAttribute("href", upiUrl);
-
         payBtn.addEventListener("click", function () {
-          // On desktop / non-UPI devices, deep link won't open.
-          // Show fallback hint after a short delay so user can see and copy the UPI ID
+          // On desktop, deep link won't open — show helper after 1s
           window.setTimeout(function () {
             if (fallback) fallback.classList.add("is-visible");
           }, 1000);
@@ -103,75 +165,75 @@
       }
     }
 
-    // Direct anchor link for Google Review
+    // Direct App Links
+    if (config.upiId) {
+      const encName = encodeURIComponent(config.upiPayeeName || config.businessName);
+      const baseParams = `pa=${config.upiId}&pn=${encName}&cu=INR`;
+      const amountParam =
+        config.upiAmount != null && config.upiAmount !== ""
+          ? `&am=${config.upiAmount}`
+          : "";
+      const fullParams = baseParams + amountParam;
+
+      if (appGPay) appGPay.setAttribute("href", `tez://upi/pay?${fullParams}`);
+      if (appPhonePe) appPhonePe.setAttribute("href", `phonepe://pay?${fullParams}`);
+      if (appPaytm) appPaytm.setAttribute("href", `paytmmp://pay?${fullParams}`);
+    }
+
+    // Review Link
     if (reviewBtn) {
       if (isPlaceholder(config.googleReviewUrl)) {
         reviewBtn.addEventListener("click", function (e) {
           e.preventDefault();
           alert(
-            "Google Review link is not configured. Open config.js and set googleReviewUrl."
+            "Google Review link is not configured yet. Open config.js and set googleReviewUrl."
           );
         });
       } else {
         reviewBtn.setAttribute("href", config.googleReviewUrl);
       }
     }
-  }
 
-  function initLogo() {
-    const wrap = document.getElementById("logo-wrap");
-    const img = document.getElementById("logo-img");
-    const placeholder = document.getElementById("logo-placeholder");
-
-    if (!config.logoUrl) {
-      if (img) img.hidden = true;
-      if (placeholder) {
-        placeholder.hidden = false;
-        const initials = (config.businessName || "B")
-          .split(/\s+/)
-          .map((w) => w[0])
-          .join("")
-          .slice(0, 2)
-          .toUpperCase();
-        placeholder.textContent = initials || "Logo";
-      }
-      return;
-    }
-
-    if (img) {
-      img.src = config.logoUrl;
-      img.alt = config.logoAlt || config.businessName;
-      img.hidden = false;
-      img.addEventListener("error", function () {
-        img.hidden = true;
-        if (placeholder) placeholder.hidden = false;
+    // Copy UPI ID button
+    if (copyBtn && config.upiId) {
+      copyBtn.addEventListener("click", function () {
+        copyToClipboard(config.upiId, function () {
+          if (copyBtnText) copyBtnText.textContent = "Copied! ✓";
+          showToast("UPI ID copied: " + config.upiId + " ✓");
+          setTimeout(function () {
+            if (copyBtnText) copyBtnText.textContent = "Copy";
+          }, 2400);
+        });
       });
     }
-    if (placeholder) placeholder.hidden = true;
+
+    initQrCode(upiUrl);
   }
 
   function init() {
     applyTheme(config.colors || {});
 
     setText("business-name", config.businessName);
+    setText("badge-text", config.badgeText || "✦ Luxury Salon & Aesthetics ✦");
     setText("tagline", config.tagline);
-    setText("prompt-text", config.promptText);
+    setText("merchant-name", config.upiPayeeName || config.businessName);
     setText("footer-message", config.footerMessage);
+    setText("upi-id-display", config.upiId);
 
     const payLabel = document.getElementById("pay-label");
     const reviewLabel = document.getElementById("review-label");
     const payIcon = document.getElementById("pay-icon");
     const reviewIcon = document.getElementById("review-icon");
 
-    if (payIcon) payIcon.textContent = config.payButtonIcon || "";
-    if (reviewIcon) reviewIcon.textContent = config.reviewButtonIcon || "";
-    if (payLabel) payLabel.textContent = config.payButtonText || "PAY NOW";
-    if (reviewLabel) reviewLabel.textContent = config.reviewButtonText || "GIVE A REVIEW";
+    if (payIcon && config.payButtonIcon) payIcon.textContent = config.payButtonIcon;
+    if (reviewIcon && config.reviewButtonIcon) reviewIcon.textContent = config.reviewButtonIcon;
+    if (payLabel) payLabel.textContent = config.payButtonText || "PAY VIA ANY UPI APP";
+    if (reviewLabel) reviewLabel.textContent = config.reviewButtonText || "WRITE A GOOGLE REVIEW";
 
-    document.title = config.businessName + " — Pay & Review";
+    document.title = (config.businessName || "Salon") + " — Pay & Review";
 
     initLogo();
-    bindActions();
+    initLinks();
   }
 
   if (document.readyState === "loading") {
