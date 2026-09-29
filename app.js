@@ -98,13 +98,16 @@
       if (img) img.hidden = true;
       if (placeholder) {
         placeholder.hidden = false;
-        const initials = (config.businessName || "B")
-          .split(/\s+/)
-          .map((w) => w[0])
-          .join("")
-          .slice(0, 2)
-          .toUpperCase();
-        placeholder.textContent = initials || "NB";
+        // Only set text initials if placeholder has no child SVG (leaf emblem)
+        if (!placeholder.querySelector("svg")) {
+          const initials = (config.businessName || "B")
+            .split(/\s+/)
+            .map((w) => w[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase();
+          placeholder.textContent = initials || "NB";
+        }
       }
     }
   }

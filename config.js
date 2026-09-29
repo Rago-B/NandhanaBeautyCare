@@ -5,7 +5,7 @@
 const SITE_CONFIG = {
   businessName: "Nandhana Beauty Care",
   badgeText: "✦ Luxury Salon & Aesthetics ✦",
-  tagline: "Hair, Skin & Bridal • Elevate Your Natural Glow",
+  tagline: "Quality • Trust • Service",
   footerMessage: "Thank you for supporting our salon ❤️",
   promptText: "How would you like to continue?",
 
@@ -23,20 +23,20 @@ const SITE_CONFIG = {
   // ENTER CLIENT GOOGLE REVIEW URL HERE (Google direct review link)
   googleReviewUrl: "https://search.google.com/local/writereview?placeid=ChIJRcEbiL8RBDsRHhv30-dJpM4",
 
-  payButtonText: "PAY VIA ANY UPI APP",
-  payButtonIcon: "⚡",
-  reviewButtonText: "WRITE A GOOGLE REVIEW",
-  reviewButtonIcon: "⭐",
+  payButtonText: "Make Payment",
+  payButtonIcon: "",
+  reviewButtonText: "Leave a Review",
+  reviewButtonIcon: "",
 
   colors: {
-    background: "#ffffff",
-    surface: "#f7f8fa",
-    textPrimary: "#1a1a1a",
+    background: "#f4f6f2",
+    surface: "#ffffff",
+    textPrimary: "#1a2e3b",
     textSecondary: "#6b7280",
-    accentPay: "#111111",
-    accentPayHover: "#333333",
-    accentReview: "#111111",
-    accentReviewHover: "#333333",
+    accentPay: "#2D9E5A",
+    accentPayHover: "#248F4E",
+    accentReview: "#4A9FF5",
+    accentReviewHover: "#3B8FE5",
     border: "#e5e7eb",
   },
 };
