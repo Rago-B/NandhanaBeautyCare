@@ -223,6 +223,59 @@
     initQrCode(upiUrl);
   }
 
+  function showPaySection() {
+    var paySection = document.getElementById("pay-section");
+    var reviewDone = document.getElementById("review-done");
+    if (paySection) paySection.classList.add("section-visible");
+    if (reviewDone) reviewDone.hidden = false;
+    // Scroll to pay section smoothly
+    if (paySection) {
+      setTimeout(function () {
+        paySection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
+  }
+
+  function initReviewGating() {
+    var STORAGE_KEY = "nandhana_reviewed";
+    var paySection = document.getElementById("pay-section");
+    var reviewBtn = document.getElementById("btn-review");
+
+    // If already reviewed before, show pay section immediately
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === "true") {
+        showPaySection();
+        return;
+      }
+    } catch (e) {
+      // localStorage unavailable — fall through
+    }
+
+    // Track when the user clicks the review button
+    var reviewClicked = false;
+
+    if (reviewBtn) {
+      reviewBtn.addEventListener("click", function () {
+        reviewClicked = true;
+      });
+    }
+
+    // When user comes back to the page after visiting Google Review
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible" && reviewClicked) {
+        reviewClicked = false;
+        // Save to localStorage so pay stays visible on future visits
+        try {
+          localStorage.setItem(STORAGE_KEY, "true");
+        } catch (e) {
+          // ignore
+        }
+        showPaySection();
+        showToast("Thank you for your review! 🎉");
+      }
+    });
+  }
+
   function init() {
     applyTheme(config.colors || {});
 
@@ -245,6 +298,7 @@
 
     initLogo();
     initLinks();
+    initReviewGating();
   }
 
   if (document.readyState === "loading") {
