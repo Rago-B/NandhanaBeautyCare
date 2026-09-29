@@ -156,49 +156,21 @@
         });
       } else {
         payBtn.setAttribute("href", upiUrl);
-        payBtn.addEventListener("click", function () {
-          // On desktop, deep link won't open — show helper after 1s
-          window.setTimeout(function () {
-            if (fallback) fallback.classList.add("is-visible");
-          }, 1000);
-        });
       }
     }
 
     // Direct App Links
     if (config.upiId) {
       const encName = encodeURIComponent(config.upiPayeeName || config.businessName).replace(/\+/g, "%20");
-      const baseParams = `pa=${config.upiId}&pn=${encName}&cu=INR`;
-      const amountParam =
-        config.upiAmount != null && config.upiAmount !== ""
-          ? `&am=${config.upiAmount}`
-          : "";
-      const fullParams = baseParams + amountParam;
-      const isAndroid = /android/i.test(navigator.userAgent);
-
-      if (isAndroid) {
-        // Direct Android Intent URLs target the specific installed app directly
-        if (appPhonePe)
-          appPhonePe.setAttribute(
-            "href",
-            `intent://pay?${fullParams}#Intent;scheme=upi;package=com.phonepe.app;end`
-          );
-        if (appGPay)
-          appGPay.setAttribute(
-            "href",
-            `intent://pay?${fullParams}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`
-          );
-        if (appPaytm)
-          appPaytm.setAttribute(
-            "href",
-            `intent://pay?${fullParams}#Intent;scheme=upi;package=net.one97.paytm;end`
-          );
-      } else {
-        // iOS / generic scheme fallback
-        if (appPhonePe) appPhonePe.setAttribute("href", `phonepe://pay?${fullParams}`);
-        if (appGPay) appGPay.setAttribute("href", `tez://upi/pay?${fullParams}`);
-        if (appPaytm) appPaytm.setAttribute("href", `paytmmp://pay?${fullParams}`);
+      let baseParams = `pa=${config.upiId}&pn=${encName}`;
+      if (config.upiAmount != null && config.upiAmount !== "") {
+        baseParams += `&am=${config.upiAmount}&cu=INR`;
       }
+      const rawUpiUrl = `upi://pay?${baseParams}`;
+
+      if (appPhonePe) appPhonePe.setAttribute("href", rawUpiUrl);
+      if (appGPay) appGPay.setAttribute("href", rawUpiUrl);
+      if (appPaytm) appPaytm.setAttribute("href", rawUpiUrl);
     }
 
     // Review Link

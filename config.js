@@ -46,9 +46,9 @@ const SITE_CONFIG = {
 
 function buildUpiDeepLink(config) {
   const payeeName = encodeURIComponent(config.upiPayeeName || config.businessName || "").replace(/\+/g, "%20");
-  let query = `pa=${config.upiId}&pn=${payeeName}&cu=INR`;
+  let query = `pa=${config.upiId}&pn=${payeeName}`;
   if (config.upiAmount != null && config.upiAmount !== "") {
-    query += `&am=${config.upiAmount}`;
+    query += `&am=${config.upiAmount}&cu=INR`;
   }
   return `upi://pay?${query}`;
 }
