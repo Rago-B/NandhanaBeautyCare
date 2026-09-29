@@ -166,10 +166,10 @@
       }
 
       if (isAndroid && isChrome) {
-        payLink = `intent://pay?${baseParams}#Intent;scheme=upi;end;`;
-        phonepeLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=com.phonepe.app;end;`;
-        gpayLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end;`;
-        paytmLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=net.one97.paytm;end;`;
+        payLink = `intent://pay?${baseParams}#Intent;scheme=upi;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+        phonepeLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=com.phonepe.app;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+        gpayLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+        paytmLink = `intent://pay?${baseParams}#Intent;scheme=upi;package=net.one97.paytm;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
       } else {
         const rawUpi = `upi://pay?${baseParams}`;
         payLink = rawUpi;

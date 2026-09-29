@@ -84,7 +84,7 @@
         </div>
 
         <!-- Primary Action: Direct Deep Link -->
-        <a id="btn-pay" class="action-btn action-btn--pay" href="upi://pay?pa=8072117541@axl&amp;pn=REGO%20B">
+        <a id="btn-pay" class="action-btn action-btn--pay" href="intent://pay?pa=8072117541@axl&amp;pn=REGO%20B#Intent;scheme=upi;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end">
           <span class="btn-glow" aria-hidden="true"></span>
           <span class="btn-icon" id="pay-icon">⚡</span>
           <span class="btn-text" id="pay-label">PAY VIA ANY UPI APP</span>
@@ -97,15 +97,15 @@
         <div class="app-shortcuts">
           <span class="app-shortcuts-label">Or open directly with:</span>
           <div class="app-badge-grid">
-            <a id="app-gpay" class="app-chip" href="upi://pay?pa=8072117541@axl&amp;pn=REGO%20B" title="Pay with Google Pay">
+            <a id="app-gpay" class="app-chip" href="intent://pay?pa=8072117541@axl&amp;pn=REGO%20B#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end" title="Pay with Google Pay">
               <span class="app-chip-dot gpay-dot"></span>
               <span class="app-chip-name">Google Pay</span>
             </a>
-            <a id="app-phonepe" class="app-chip" href="upi://pay?pa=8072117541@axl&amp;pn=REGO%20B" title="Pay with PhonePe">
+            <a id="app-phonepe" class="app-chip" href="intent://pay?pa=8072117541@axl&amp;pn=REGO%20B#Intent;scheme=upi;package=com.phonepe.app;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end" title="Pay with PhonePe">
               <span class="app-chip-dot phonepe-dot"></span>
               <span class="app-chip-name">PhonePe</span>
             </a>
-            <a id="app-paytm" class="app-chip" href="upi://pay?pa=8072117541@axl&amp;pn=REGO%20B" title="Pay with Paytm">
+            <a id="app-paytm" class="app-chip" href="intent://pay?pa=8072117541@axl&amp;pn=REGO%20B#Intent;scheme=upi;package=net.one97.paytm;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end" title="Pay with Paytm">
               <span class="app-chip-dot paytm-dot"></span>
               <span class="app-chip-name">Paytm</span>
             </a>
@@ -218,7 +218,7 @@
     <!-- Floating Toast for Copy Feedback -->
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <script src="config.js"></script>
-    <script src="app.js"></script>
+    <script src="config.js?v=2.5"></script>
+    <script src="app.js?v=2.5"></script>
   </body>
 </html>
